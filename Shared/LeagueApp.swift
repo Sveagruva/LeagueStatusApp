@@ -12,6 +12,7 @@ struct LeagueApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(AppState())
         }
     }
 }

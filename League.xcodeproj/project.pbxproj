@@ -13,6 +13,12 @@
 		4385FE84282D705C00EAAD02 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE72282D705900EAAD02 /* ContentView.swift */; };
 		4385FE85282D705C00EAAD02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4385FE73282D705C00EAAD02 /* Assets.xcassets */; };
 		4385FE86282D705C00EAAD02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4385FE73282D705C00EAAD02 /* Assets.xcassets */; };
+		4385FE91282D733E00EAAD02 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 4385FE90282D733E00EAAD02 /* Introspect */; };
+		4385FE93282D7C2D00EAAD02 /* disableSideBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE92282D7C2D00EAAD02 /* disableSideBar.swift */; };
+		4385FE95282D7D9E00EAAD02 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE94282D7D9E00EAAD02 /* API.swift */; };
+		4385FE97282D7E2400EAAD02 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE96282D7E2400EAAD02 /* State.swift */; };
+		4385FE98282D7E2400EAAD02 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE96282D7E2400EAAD02 /* State.swift */; };
+		4385FE99282D816900EAAD02 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE94282D7D9E00EAAD02 /* API.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +28,9 @@
 		4385FE78282D705C00EAAD02 /* League.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = League.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4385FE7E282D705C00EAAD02 /* League.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = League.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4385FE80282D705C00EAAD02 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		4385FE92282D7C2D00EAAD02 /* disableSideBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = disableSideBar.swift; sourceTree = "<group>"; };
+		4385FE94282D7D9E00EAAD02 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		4385FE96282D7E2400EAAD02 /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4385FE91282D733E00EAAD02 /* Introspect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +67,8 @@
 				4385FE71282D705900EAAD02 /* LeagueApp.swift */,
 				4385FE72282D705900EAAD02 /* ContentView.swift */,
 				4385FE73282D705C00EAAD02 /* Assets.xcassets */,
+				4385FE94282D7D9E00EAAD02 /* API.swift */,
+				4385FE96282D7E2400EAAD02 /* State.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -74,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				4385FE80282D705C00EAAD02 /* macOS.entitlements */,
+				4385FE92282D7C2D00EAAD02 /* disableSideBar.swift */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -111,6 +124,9 @@
 			dependencies = (
 			);
 			name = "League (macOS)";
+			packageProductDependencies = (
+				4385FE90282D733E00EAAD02 /* Introspect */,
+			);
 			productName = "League (macOS)";
 			productReference = 4385FE7E282D705C00EAAD02 /* League.app */;
 			productType = "com.apple.product-type.application";
@@ -142,6 +158,9 @@
 				Base,
 			);
 			mainGroup = 4385FE6B282D705900EAAD02;
+			packageReferences = (
+				4385FE8F282D733E00EAAD02 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+			);
 			productRefGroup = 4385FE79282D705C00EAAD02 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -178,6 +197,8 @@
 			files = (
 				4385FE83282D705C00EAAD02 /* ContentView.swift in Sources */,
 				4385FE81282D705C00EAAD02 /* LeagueApp.swift in Sources */,
+				4385FE99282D816900EAAD02 /* API.swift in Sources */,
+				4385FE97282D7E2400EAAD02 /* State.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,6 +207,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4385FE84282D705C00EAAD02 /* ContentView.swift in Sources */,
+				4385FE93282D7C2D00EAAD02 /* disableSideBar.swift in Sources */,
+				4385FE95282D7D9E00EAAD02 /* API.swift in Sources */,
+				4385FE98282D7E2400EAAD02 /* State.swift in Sources */,
 				4385FE82282D705C00EAAD02 /* LeagueApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -450,6 +474,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4385FE8F282D733E00EAAD02 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4385FE90282D733E00EAAD02 /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4385FE8F282D733E00EAAD02 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4385FE6C282D705900EAAD02 /* Project object */;
 }
