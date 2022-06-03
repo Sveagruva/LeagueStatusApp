@@ -10,47 +10,32 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var state: AppState
+    @EnvironmentObject var cache: CacheRawData
+
     @Namespace var ns
     
-    @State private var selectedItem: String?
-    
-    var body: some View {
-        let views = ForEach(state.champions, id: \.id.self) { champion in
-            NavigationLink(
-                destination:
-                    Text(champion.name)
-//                    .fontWeight(.bold)
-                        .matchedGeometryEffect(id: champion.id, in: ns)
-                        ,
-                tag: champion.id,
-                selection: $selectedItem
-             ) {
-                Spacer()
-             }
-        }
+    @State private var selectedChampion: Champion?
+//    @State private var currentData: NetworkImageReferenceData?
         
-        NavigationView {
-            #if os(macOS)
-                VStack{
-                    views
-                }
-                .dissableSideBar()
-            #endif
-            
-
+    var body: some View {
+        ZStack {
             VStack{
-    //            Text("PATH: \(Settings.path)")
+        //            Text("PATH: \(Settings.path)")
                 ScrollView {
                     let gap: CGFloat = 28
-                    #if os(iOS)
-                    views
-                    #endif
+                    
                     LazyVGrid(columns: [.init(.adaptive(minimum: 350, maximum: 600), spacing: gap)], spacing: gap){
                         ForEach(state.champions, id: \.id.self) { champion in
-                            ChampionPreview(champion: champion, ns: ns)
+                            let dta = NetworkImageReferenceData(ns: ns, id: champion.id)
+                            
+                            let _ = handleImageLoad(dta: dta, champion: champion, cache: cache)
+                            
+                            ChampionPreview(champion: champion, imageStorate: dta)
                                 .onTapGesture {
                                     withAnimation {
-                                        selectedItem = champion.id
+//                                        dta.indication.toggle()
+//                                        currentData = dta
+                                        selectedChampion = champion
                                     }
                                 }
                         }
@@ -63,95 +48,101 @@ struct ContentView: View {
             .padding(8)
             .frame(minWidth: 200, idealWidth: 500, maxWidth: .infinity, minHeight: 300, idealHeight: 500, maxHeight: .infinity)
             
+            if(selectedChampion != nil) {
+                VStack{
+                    ChampionView(champion: $selectedChampion, ns: ns)
+                }
+                .background(.background)
+            } else {
+                Color.clear
+            }
+
+
         }
+//        .overlay {
+//
+//        }
     }
+    
 }
 
 
+func handleImageLoad(dta: NetworkImageReferenceData, champion: Champion, cache: CacheRawData) {
+    let key = champion.id;
+    let rawData = cache.get(key: key)
+    
+    if(rawData == nil) {
+//        var publisher = cache.getDependency(key: key)
+        
+        if(cache.isDependency(key: key)) {
+            cache.createDependency(key: key) { promise in
+                
+//                URLSession.shared.dataTaskPublisher(for: URL(string: champion.imageURL)!)
+//                    .map({ $0.data })
+//                    .catch({ _ in
+//
+//                    })
+//                    .sink { raw in
+//
+//
+//                    }
+                
+                DispatchQueue.main.async {
+                    API.download(url: champion.imageURL) { raw in
+                        promise(Result.success(raw))
+                        cache.set(key: key, data: raw)
+                    }
+                }
 
+            }
+            
+//            publisher = cache.getDependency(key: key)
+        }
+        
+        cache.addToDependency(key: key) { data in
+            dta.data = data
+        }
+        
+//        publisher!
+//            .print()
+//            .sink { data in
+//                DispatchQueue.main.sync {
+//                    print("sinked")
+//                    dta.data = data
+//                }
+//            }
 
+        
+//        if(isCreating) {
+//        }
+        
+    } else {
+        dta.data = rawData!
+    }
+
+}
 
 struct ChampionPreview: View {
     var champion: Champion
-    let ns: Namespace
+    var imageStorate: NetworkImageReferenceData
     let AR = 0.8
+
     
     var body: some View {
-        VStack {
-            Color.clear
-                .background(
-                    AsyncImage(url: URL(string: champion.imageURL)) { image in
-                        image
-                    } placeholder: {
-                        VStack{
-                            ProgressView()
-                        }
-                    }
-                )
-                .clipped()
-                .contentShape(Rectangle())
-            Text(champion.name)
-//                .fontWeight(.bold)
-                .matchedGeometryEffect(id: champion.id, in: ns)
-                
+        ZStack {
+            VStack {
+                Color.clear
+                    .background(
+                        RawDataImage(data: imageStorate, origin: false)
+                    )
+                    .clipped()
+                    .contentShape(Rectangle())
+                Text(champion.name)
+                    .fontWeight(.bold)
+//                    .matchedGeometryEffect(id: champion.id, in: ns)
+                    
+            }
+            .aspectRatio(AR, contentMode: .fill)
         }
-        .aspectRatio(AR, contentMode: .fill)
     }
-    
-//    struct ChampionImage: View {
-//        let AR = 0.7
-//
-//        class DATA: ObservableObject {
-//            @Published var d: Data? = nil
-//            let u: URL
-//
-//            init(u: URL, shit: @escaping (DATA) -> Void) {
-//                self.u = u
-//                shit(self)
-//            }
-//        }
-//
-//        @ObservedObject var dta: DATA
-//
-//        init(url: String) {
-//            dta = DATA(u: URL(string: url)!) { bi in
-//                let task = URLSession.shared.dataTask(with: bi.u, completionHandler: { data, response, error in
-//                    guard let data = data, error == nil else {
-//                        print("cannot request shit \(error!)")
-//                        return
-//                    }
-//
-//                    DispatchQueue.main.async {
-//                        bi.d = data
-//                    }
-//                } )
-//
-//                task.resume()
-//            }
-//        }
-//
-//        var body: some View {
-//            VStack{
-//                if(dta.d == nil) {
-//                    ZStack{
-//                        Color.gray
-//                          .scaledToFit()
-//                        ActivityIndicator()
-//                    }
-//                } else {
-//                    Color.clear
-//                      .scaledToFit()
-//                      .background(
-//                            Image(nsImage: NSImage(data: dta.d!)!)
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fill)
-////                            ,alignment: .topLeading
-//                      )
-//                      .clipped()
-//                }
-//            }
-//            .aspectRatio(AR, contentMode: .fill)
-//        }
-//    }
-
 }

@@ -13,6 +13,7 @@ struct LeagueApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(AppState())
+                .environmentObject(CacheRawData())
         }
     }
 }

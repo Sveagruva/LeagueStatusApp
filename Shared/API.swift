@@ -15,6 +15,29 @@ protocol Tracable {
 }
 
 
+//struct Stats: Codable {
+//    let hp: Float
+//    let hpperlevel: Float
+//    let mp: Float
+//    let mpperlevel: Float
+//    let movespeed: Float
+//    let armor: Float
+//    let armorperlevel: Float
+//    let spellblock: Float
+//    let spellblockperlevel: Float
+//    let attackrange: Float
+//    let hpregen: Float
+//    let hpregenperlevel: Float
+//    let mpregen: Float
+//    let mpregenperlevel: Float
+//    let crit: Float
+//    let critperlevel: Float
+//    let attackdamage: Float
+//    let attackdamageperlevel: Float
+//    let attackspeedperlevel: Float
+//    let attackspeed: Float
+//}
+
 struct Champion: Tracable {
     let language: String
     let path: String
@@ -23,7 +46,9 @@ struct Champion: Tracable {
     let id: String
     let title: String
     let blurb: String
-    let passive: Passive?
+    let stats: [String: Float]
+    var passive: Passive?
+    var skins: [String]?
     
     
     struct Passive: Tracable {
@@ -34,9 +59,14 @@ struct Champion: Tracable {
         let description: String
         let image: String
         
-        lazy var imageURL: String = {
-            "\(API.base)/\(path)/img/passive/\(image)"
-        }()
+        var imageURL: String {
+            get{
+                "\(API.base)/\(path)/img/passive/\(image)"
+            }
+        }
+//        lazy var imageURL: String = {
+//            "\(API.base)/\(path)/img/passive/\(image)"
+//        }()
     }
 
     
@@ -118,7 +148,7 @@ class API {
                 var realShit: [Champion] = []
                 for (_, value) in json.data {
                     realShit.append(Champion(
-                        language: "en_US", path: "12.3.1", name: value.name, id: value.id, title: value.title, blurb: value.blurb, passive: nil
+                        language: "en_US", path: "12.3.1", name: value.name, id: value.id, title: value.title, blurb: value.blurb, stats: value.stats
                     ))
 //                    break
                 }
@@ -134,7 +164,7 @@ class API {
         task.resume()
     }
     
-    static func getChampionsSkins(champion: Champion, callback: @escaping ([String]) -> Void) {
+    static func getChampionFullInfo(champion: Champion, callback: @escaping (Champion) -> Void) {
         guard let url = URL(string: API.getChampionSkinURL(langauge: champion.language, path: champion.path, name: champion.id)) else {
             return
         }
@@ -148,15 +178,27 @@ class API {
            struct data: Codable {
                let id: String
                let name: String
-               let skins: [skin]
+               let skins: [Skin]
+               let passive: Passive
                
-               struct skin: Codable {
+               struct Skin: Codable {
                    let num: Int
                    let name: String
                    let chromas: Bool
                }
+               
+               struct Passive: Codable {
+                   let name: String
+                   let description: String
+                   let image: PassiveImage
+                   
+                   struct PassiveImage: Codable {
+                       let full: String
+                   }
+               }
            }
         }
+    
         
         let task = URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
             do {
@@ -168,9 +210,13 @@ class API {
                 let json: jsonResponse = try JSONDecoder().decode(jsonResponse.self, from: data)
                             
                 DispatchQueue.main.sync {
-                    callback((json.data[champion.id]!.skins.map({ sk in
-                        API.getChampionSpecificSkinURL(name: champion.id, num: sk.num)
-                    })))
+                    let champ = json.data[champion.id]!
+                    callback(Champion(
+                        language: "en_US", path: "12.3.1", name: champ.name, id: champ.id, title: champion.title, blurb: champion.blurb, stats: champion.stats, passive: Champion.Passive(language: "en_US", path: "12.3.1", name: champ.passive.name, description: champ.passive.description, image: champ.passive.image.full
+                                                                                                                                                                  ), skins: champ.skins.map({ s in
+                                                                                                                                                                      API.getChampionSpecificSkinURL(name: champ.name, num: s.num)
+                                                                                                                                                                  }))
+)
                 }
             } catch {
                 print("cannot decode shit \(error)")
