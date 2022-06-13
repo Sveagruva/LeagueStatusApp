@@ -12,6 +12,7 @@ class AppState: ObservableObject {
     @Published var champions: [Champion] = []
     
     init() {
+        print("app state")
         API.getLanguages { languages in
             self.languages = languages
         }

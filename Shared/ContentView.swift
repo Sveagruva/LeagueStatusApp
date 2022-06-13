@@ -14,27 +14,46 @@ struct ContentView: View {
 
     @Namespace var ns
     
+    @State private var searchInput: String = ""
+    @FocusState private var focusState: Bool
+    
     @State private var selectedChampion: Champion?
+
 //    @State private var currentData: NetworkImageReferenceData?
         
     var body: some View {
-        ZStack {
             VStack{
         //            Text("PATH: \(Settings.path)")
+                TextField(
+                    "Name",
+                    text: $searchInput
+                )
+                .focused($focusState)
+                    .padding(14)
+
                 ScrollView {
                     let gap: CGFloat = 28
-                    
+//                    let matchedChampions = []
+                                        
                     LazyVGrid(columns: [.init(.adaptive(minimum: 350, maximum: 600), spacing: gap)], spacing: gap){
-                        ForEach(state.champions, id: \.id.self) { champion in
+                        ForEach(state.champions.filter { champion in
+                            if(searchInput.isEmpty) {
+                                return true
+                            }
+                            
+                            return champion.name.lowercased().starts(with: searchInput.lowercased())
+                        }, id: \.id.self) { champion in
+                            
                             let dta = NetworkImageReferenceData(ns: ns, id: champion.id)
                             
-                            let _ = handleImageLoad(dta: dta, champion: champion, cache: cache)
+                            let _ = handleImageLoad(dta: dta, url: champion.imageURL, cache: cache)
                             
-                            ChampionPreview(champion: champion, imageStorate: dta)
+                            ChampionPreview(champion: champion, imageStorate: dta, selectedChampion: $selectedChampion)
                                 .onTapGesture {
                                     withAnimation {
 //                                        dta.indication.toggle()
 //                                        currentData = dta
+                                        focusState = false
                                         selectedChampion = champion
                                     }
                                 }
@@ -43,79 +62,78 @@ struct ContentView: View {
                     }
                     .padding(10)
                 }
+                .opacity(selectedChampion == nil ? 1 : 0)
+
                 .padding(.top, 10)
             }
             .padding(8)
             .frame(minWidth: 200, idealWidth: 500, maxWidth: .infinity, minHeight: 300, idealHeight: 500, maxHeight: .infinity)
-            
-            if(selectedChampion != nil) {
-                VStack{
-                    ChampionView(champion: $selectedChampion, ns: ns)
+            .overlay {
+                if(selectedChampion != nil) {
+                    ZStack {
+                        VStack{
+                            ChampionView(champion: $selectedChampion, ns: ns, cmp: selectedChampion!)
+        //                            .zIndex(1000)
+                        }
+                        .background(.background)
+                        
+                        VStack{
+                            HStack{
+                                Spacer()
+                                    Button(action: {
+                                        withAnimation {
+                                            selectedChampion = nil
+                                        }
+                                    }) {
+                                        HStack {
+                                            Image(systemName: "xmark")
+                                                .font(.system(size: 32))
+                                                .frame(width: 45, height: 45)
+                                                .foregroundColor(Color.black)
+                                                .background(Color.red)
+                                                .clipShape(Circle())
+                                        }
+
+                                    }
+                                    .keyboardShortcut(.escape, modifiers: [])
+
+                                    .buttonStyle(PlainButtonStyle())
+//                                    .buttonStyle(style: .bordered)
+//                                    .frame(width: 100, height: 100)
+                                .padding(10)
+                            }
+                            Spacer()
+                        }
+                        .frame(alignment: .topTrailing)
+
+                    }
+                    
+                } else {
+                    Color.clear
                 }
-                .background(.background)
-            } else {
-                Color.clear
+
             }
 
+            
 
-        }
-//        .overlay {
-//
-//        }
     }
-    
 }
 
 
-func handleImageLoad(dta: NetworkImageReferenceData, champion: Champion, cache: CacheRawData) {
-    let key = champion.id;
-    let rawData = cache.get(key: key)
+func handleImageLoad(dta: NetworkImageReferenceData, url: String, cache: CacheRawData) {
+//    let key = champion.imageURL;
+    let rawData = cache.get(key: url)
     
     if(rawData == nil) {
 //        var publisher = cache.getDependency(key: key)
         
-        if(cache.isDependency(key: key)) {
-            cache.createDependency(key: key) { promise in
-                
-//                URLSession.shared.dataTaskPublisher(for: URL(string: champion.imageURL)!)
-//                    .map({ $0.data })
-//                    .catch({ _ in
-//
-//                    })
-//                    .sink { raw in
-//
-//
-//                    }
-                
-                DispatchQueue.main.async {
-                    API.download(url: champion.imageURL) { raw in
-                        promise(Result.success(raw))
-                        cache.set(key: key, data: raw)
-                    }
-                }
-
-            }
-            
-//            publisher = cache.getDependency(key: key)
+        if(!cache.isDependency(key: url)) {
+            cache.createDependency(url: url)
         }
-        
-        cache.addToDependency(key: key) { data in
+
+        cache.addToDependency(key: url) { data in
             dta.data = data
         }
-        
-//        publisher!
-//            .print()
-//            .sink { data in
-//                DispatchQueue.main.sync {
-//                    print("sinked")
-//                    dta.data = data
-//                }
-//            }
-
-        
-//        if(isCreating) {
-//        }
-        
     } else {
         dta.data = rawData!
     }
@@ -125,22 +143,26 @@ func handleImageLoad(dta: NetworkImageReferenceData, champion: Champion, cache: 
 struct ChampionPreview: View {
     var champion: Champion
     var imageStorate: NetworkImageReferenceData
+    @Binding var selectedChampion: Champion?
     let AR = 0.8
+
 
     
     var body: some View {
         ZStack {
             VStack {
-                Color.clear
-                    .background(
-                        RawDataImage(data: imageStorate, origin: false)
-                    )
-                    .clipped()
-                    .contentShape(Rectangle())
-                Text(champion.name)
-                    .fontWeight(.bold)
-//                    .matchedGeometryEffect(id: champion.id, in: ns)
-                    
+                if(!(selectedChampion != nil && selectedChampion!.name == champion.name)) {
+                    Color.clear
+                        .background(
+                            RawDataImage(data: imageStorate, origin: selectedChampion == nil)
+                        )
+                        .clipped()
+                        .contentShape(Rectangle())
+                    Text(champion.name)
+                        .font(.system(size: 30, weight: .heavy, design: .default))
+                        .minimumScaleFactor(0.1)
+                        .matchedGeometryEffect(id:  champion.id + "title", in: imageStorate.ns, isSource: selectedChampion == nil)
+                }
             }
             .aspectRatio(AR, contentMode: .fill)
         }

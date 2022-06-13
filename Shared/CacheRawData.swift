@@ -12,47 +12,60 @@ import Combine
 class CacheRawData: ObservableObject {
     var datas: [String: Data] = [:]
 //    var pubs: [String: (Result<Data, Never>) -> Void] = [:]
-    var futures: [String: Future<Data, Never>] = [:]
-    var addons: [String: [AnyCancellable]] = [:]
+    var waitingFor: [String: Bool] = [:]
+    var addons: [String: [(Data) -> Void]] = [:]
     
     init(){
         
     }
     
-    func createDependency(key: String, resolver: @escaping (@escaping (Result<Data, Never>) -> Void) -> Void) -> Future <Data, Never> {
-        let future: Future <Data, Never> = Future() { promise in
-            resolver(promise)
+    func createDependency(url: String) -> Void {
+        waitingFor[url] = true
+        API.download(url: url) { [weak self] data in
+            guard let `self` = self else {
+                return
+            }
+
+            self.datas[url] = data
+            self.waitingFor.removeValue(forKey: url)
+            self.addons[url]!.forEach { addon in
+//                DispatchQueue.main.sync {
+                    addon(data)
+//                }
+            }
         }
-        
-        futures[key] = future
-        addons[key] = []
-        return future
     }
 
     func isDependency(key: String) -> Bool {
-        return futures[key] == nil
+        return waitingFor[key] == true
     }
     
     func addToDependency(key: String, addon: @escaping (Data) -> Void) -> Void {
-        addons[key]!.append(
-            futures[key]!
-                .sink { data in
-                    addon(data)
-                }
-        )
+        if(!self.isDependency(key: key)) {
+            addon(self.get(key: key)!)
+        } else {
+            
+            if addons[key] == nil {
+                addons[key] = []
+            }
+            
+            addons[key]!.append(
+                addon
+            )
+        }
     }
 
-    func set(key: String, data: Data) {
-        let future = futures[key]
-        
-        if(future != nil) {
-            print("set clearing")
-            futures[key] = nil
-            addons[key] = []
-        }
-        
-        datas[key] = data
-    }
+//    func set(key: String, data: Data) {
+//        let future = futures[key]
+//
+//        if(future != nil) {
+//            print("set clearing")
+//            futures[key] = nil
+//            addons[key] = []
+//        }
+//
+//        datas[key] = data
+//    }
     
     func get(key: String) -> Data? {
         return datas[key]
