@@ -23,98 +23,90 @@ struct ContentView: View {
         
     var body: some View {
             VStack{
-        //            Text("PATH: \(Settings.path)")
-                TextField(
-                    "Name",
-                    text: $searchInput
-                )
-                .focused($focusState)
+//                    Text("PATH: \(Settings.path)")
+                TextField("Name", text: $searchInput)
+                    .focused($focusState)
                     .padding(14)
-
-                ScrollView {
-                    let gap: CGFloat = 28
-//                    let matchedChampions = []
-                                        
-                    LazyVGrid(columns: [.init(.adaptive(minimum: 350, maximum: 600), spacing: gap)], spacing: gap){
-                        ForEach(state.champions.filter { champion in
-                            if(searchInput.isEmpty) {
-                                return true
-                            }
-                            
-                            return champion.name.lowercased().starts(with: searchInput.lowercased())
-                        }, id: \.id.self) { champion in
-                            
-                            let dta = NetworkImageReferenceData(ns: ns, id: champion.id)
-                            
-                            let _ = handleImageLoad(dta: dta, url: champion.imageURL, cache: cache)
-                            
-                            ChampionPreview(champion: champion, imageStorate: dta, selectedChampion: $selectedChampion)
-                                .onTapGesture {
-                                    withAnimation {
-//                                        dta.indication.toggle()
-//                                        currentData = dta
-                                        focusState = false
-                                        selectedChampion = champion
-                                    }
-                                }
-                        }
-
-                    }
-                    .padding(10)
-                }
-                .opacity(selectedChampion == nil ? 1 : 0)
-
-                .padding(.top, 10)
+                ChampionsListView
+                    .opacity(selectedChampion == nil ? 1 : 0)
+                    .padding(.top, 10)
             }
             .padding(8)
-            .frame(minWidth: 200, idealWidth: 500, maxWidth: .infinity, minHeight: 300, idealHeight: 500, maxHeight: .infinity)
             .overlay {
                 if(selectedChampion != nil) {
-                    ZStack {
-                        VStack{
-                            ChampionView(champion: $selectedChampion, ns: ns, cmp: selectedChampion!)
-        //                            .zIndex(1000)
-                        }
-                        .background(.background)
-                        
-                        VStack{
-                            HStack{
-                                Spacer()
-                                    Button(action: {
-                                        withAnimation {
-                                            selectedChampion = nil
-                                        }
-                                    }) {
-                                        HStack {
-                                            Image(systemName: "xmark")
-                                                .font(.system(size: 32))
-                                                .frame(width: 45, height: 45)
-                                                .foregroundColor(Color.black)
-                                                .background(Color.red)
-                                                .clipShape(Circle())
-                                        }
-
-                                    }
-                                    .keyboardShortcut(.escape, modifiers: [])
-
-                                    .buttonStyle(PlainButtonStyle())
-//                                    .buttonStyle(style: .bordered)
-//                                    .frame(width: 100, height: 100)
-                                .padding(10)
+                    SelectedChampionView
+                }
+            }
+    }
+    
+    @ViewBuilder
+    var SelectedChampionView: some View {
+        ZStack {
+            VStack{
+                ChampionView(champion: $selectedChampion, ns: ns, cmp: selectedChampion!)
+            }
+            .background(.background)
+            
+            VStack{
+                HStack{
+                    Spacer()
+                        Button(action: {
+                            withAnimation {
+                                selectedChampion = nil
                             }
-                            Spacer()
-                        }
-                        .frame(alignment: .topTrailing)
+                        }) {
+                            HStack {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 32))
+                                    .frame(width: 45, height: 45)
+                                    .foregroundColor(Color.black)
+                                    .background(Color.red)
+                                    .clipShape(Circle())
+                            }
 
+                        }
+                        .keyboardShortcut(.escape, modifiers: [])
+                        .buttonStyle(PlainButtonStyle())
+                    
+                    .padding(10)
+                }
+                Spacer()
+            }
+            .frame(alignment: .topTrailing)
+
+        }
+    }
+    
+    @ViewBuilder
+    var ChampionsListView: some View {
+        ScrollView {
+            let gap: CGFloat = 28
+            
+            LazyVGrid(columns: [.init(.adaptive(minimum: 350, maximum: 600), spacing: gap)], spacing: gap){
+                ForEach(state.champions.filter { champion in
+                    if(searchInput.isEmpty) {
+                        return true
                     }
                     
-                } else {
-                    Color.clear
+                    return champion.name.lowercased().starts(with: searchInput.lowercased())
+                }, id: \.id.self) { champion in
+                    
+                    let dta = NetworkImageReferenceData(ns: ns, id: champion.id)
+                    
+                    let _ = handleImageLoad(dta: dta, url: champion.imageURL, cache: cache)
+                    
+                    ChampionPreview(champion: champion, imageStorate: dta, selectedChampion: $selectedChampion)
+                        .onTapGesture {
+                            withAnimation {
+                                focusState = false
+                                selectedChampion = champion
+                            }
+                        }
                 }
 
             }
-
-            
+            .padding(10)
+        }
 
     }
 }

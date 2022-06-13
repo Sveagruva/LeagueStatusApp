@@ -12,6 +12,7 @@ struct LeagueApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .frame(minWidth: 400, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 500, maxHeight: .infinity)
                 .environmentObject(AppState())
                 .environmentObject(CacheRawData())
         }
