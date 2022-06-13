@@ -47,9 +47,47 @@ struct Champion: Tracable {
     let title: String
     let blurb: String
     let stats: [String: Float]
-    var passive: Passive?
-    var skins: [String]?
     
+    //https://ddragon.leagueoflegends.com/cdn/5.9.1/img/passive/Ezreal_RisingSpellForce.png
+    var imageURL: String {
+        get{
+            let img = id == "Fiddlesticks" ? "FiddleSticks" : id
+            return "\(API.base)/img/champion/centered/\(img)_0.jpg"
+        }
+    }
+//    let imageURL: String
+//    static func createImageURL(name: String) {
+//        "\(API.base)/\(path)/img/passive/\(name)"
+//    }
+}
+
+struct AdvancedChampionInfo: Tracable {
+    let basicChampion: Champion
+    
+    var path: String {
+        get{
+            basicChampion.path
+        }
+    }
+
+    var language: String {
+        get{
+            basicChampion.language
+        }
+    }
+    
+    var passive: Passive
+    var skins: [Skin]
+    
+    struct Skin {
+        let num: Int
+        let name: String
+        let imageURL: String
+        
+//        lazy var imageURL: String = {
+//            "\(API.base)/\(path)/img/passive/\(image)"
+//        }()
+    }
     
     struct Passive: Tracable {
         let language: String
@@ -68,19 +106,6 @@ struct Champion: Tracable {
 //            "\(API.base)/\(path)/img/passive/\(image)"
 //        }()
     }
-
-    
-    //https://ddragon.leagueoflegends.com/cdn/5.9.1/img/passive/Ezreal_RisingSpellForce.png
-    var imageURL: String {
-        get{
-            let img = id == "Fiddlesticks" ? "FiddleSticks" : id
-            return "\(API.base)/img/champion/centered/\(img)_0.jpg"
-        }
-    }
-//    let imageURL: String
-//    static func createImageURL(name: String) {
-//        "\(API.base)/\(path)/img/passive/\(name)"
-//    }
 }
 
 class API {
@@ -164,7 +189,7 @@ class API {
         task.resume()
     }
     
-    static func getChampionFullInfo(champion: Champion, callback: @escaping (Champion) -> Void) {
+    static func getChampionFullInfo(champion: Champion, callback: @escaping (AdvancedChampionInfo) -> Void) {
         guard let url = URL(string: API.getChampionSkinURL(langauge: champion.language, path: champion.path, name: champion.id)) else {
             return
         }
@@ -211,12 +236,13 @@ class API {
                             
                 DispatchQueue.main.sync {
                     let champ = json.data[champion.id]!
-                    callback(Champion(
-                        language: "en_US", path: "12.3.1", name: champ.name, id: champ.id, title: champion.title, blurb: champion.blurb, stats: champion.stats, passive: Champion.Passive(language: "en_US", path: "12.3.1", name: champ.passive.name, description: champ.passive.description, image: champ.passive.image.full
-                                                                                                                                                                  ), skins: champ.skins.map({ s in
-                                                                                                                                                                      API.getChampionSpecificSkinURL(name: champ.name, num: s.num)
-                                                                                                                                                                  }))
-)
+                    let passive = AdvancedChampionInfo.Passive(language: champion.language, path: champion.path, name: champ.passive.name, description: champ.passive.description, image: champ.passive.image.full)
+                    let skins = champ.skins.map({ s in
+                        AdvancedChampionInfo.Skin(num: s.num, name: s.name, imageURL: API.getChampionSpecificSkinURL(name: champion.id, num: s.num))
+                    })
+                    
+                    let advChamp = AdvancedChampionInfo(basicChampion: champion, passive: passive, skins: skins)
+                    callback(advChamp)
                 }
             } catch {
                 print("cannot decode shit \(error)")

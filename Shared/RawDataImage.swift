@@ -38,6 +38,8 @@ struct RawDataImage: View {
                     }
                 } else {
                     Image(nsImage: im!)
+                        .resizable()
+                        .scaledToFit()
                 }
             } else {
                 Image(nsImage: NSImage(data: data.data!)!)

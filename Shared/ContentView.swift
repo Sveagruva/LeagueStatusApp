@@ -43,7 +43,7 @@ struct ContentView: View {
     var SelectedChampionView: some View {
         ZStack {
             VStack{
-                ChampionView(champion: $selectedChampion, ns: ns, cmp: selectedChampion!)
+                ChampionView(selectedChampion: $selectedChampion, ns: ns, champion: selectedChampion!)
             }
             .background(.background)
             
