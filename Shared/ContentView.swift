@@ -155,6 +155,17 @@ struct ChampionPreview: View {
                         .minimumScaleFactor(0.1)
                         .matchedGeometryEffect(id:  champion.id + "title", in: imageStorate.ns, isSource: selectedChampion == nil)
                 }
+                else {
+//                    let _ = print(champion.name)
+                       Color.clear
+//                            .background(.background)
+                            .clipped()
+                            .contentShape(Rectangle())
+//                            .scaledToFit()
+                        
+                    
+
+                }
             }
             .aspectRatio(AR, contentMode: .fill)
         }

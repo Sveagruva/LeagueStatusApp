@@ -51,7 +51,33 @@ struct RawDataImage: View {
             }
             //
             #else
-            Image(uiImage: UIImage(data: data.data!)!)
+            if(origin == nil) {
+                let im = UIImage(data: data.data!)
+                
+                if(im == nil) {
+                    ZStack{
+                        Color.clear
+                            .background(.background)
+                            .scaledToFit()
+                        VStack{
+                            ProgressView()
+                        }
+                    }
+                } else {
+                    Image(uiImage: im!)
+                        .resizable()
+                        .scaledToFit()
+                }
+            } else {
+                Image(uiImage: UIImage(data: data.data!)!)
+//                    .zIndex(10)
+                    .matchedGeometryEffect(id: data.id, in: data.ns, isSource: origin!)
+//                    .matchedGeometryEffect(id: data.id, in: data.ns)
+
+
+            }
+
+
             #endif
         }
 
