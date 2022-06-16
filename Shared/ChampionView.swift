@@ -143,6 +143,12 @@ struct ChampionView: View {
                                             VStack {
                                                 RawDataImage(data: dta, origin: nil)
                                                     .frame(width: height * 1.69, height: height)
+                                                #if os(macOS)
+                                                    .onTapGesture {
+                                                        let imageViewer = ImageViewer(dta: dta, title: skin.name == "default" ? champion.name : skin.name)
+                                                        imageViewer.openAsWindow()
+                                                    }
+                                                #endif
 
                                                 Text(skin.name)
                                                     .font(.system(size: 19, weight: .medium, design: .default))

@@ -23,6 +23,7 @@
 		4385FE97282D7E2400EAAD02 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE96282D7E2400EAAD02 /* AppState.swift */; };
 		4385FE98282D7E2400EAAD02 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE96282D7E2400EAAD02 /* AppState.swift */; };
 		4385FE99282D816900EAAD02 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385FE94282D7D9E00EAAD02 /* API.swift */; };
+		438B68DC285AE81200424E43 /* ImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 438B68DB285AE81200424E43 /* ImageViewer.swift */; };
 		43B04910284521570075CEC4 /* CacheRawData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B0490F284521570075CEC4 /* CacheRawData.swift */; };
 		43B04911284521570075CEC4 /* CacheRawData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B0490F284521570075CEC4 /* CacheRawData.swift */; };
 /* End PBXBuildFile section */
@@ -40,6 +41,7 @@
 		4385FE92282D7C2D00EAAD02 /* disableSideBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = disableSideBar.swift; sourceTree = "<group>"; };
 		4385FE94282D7D9E00EAAD02 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		4385FE96282D7E2400EAAD02 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		438B68DB285AE81200424E43 /* ImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageViewer.swift; path = Shared/ImageViewer.swift; sourceTree = SOURCE_ROOT; };
 		43B0490F284521570075CEC4 /* CacheRawData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheRawData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,6 +100,7 @@
 		4385FE7F282D705C00EAAD02 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				438B68DB285AE81200424E43 /* ImageViewer.swift */,
 				4385FE80282D705C00EAAD02 /* macOS.entitlements */,
 				4385FE92282D7C2D00EAAD02 /* disableSideBar.swift */,
 			);
@@ -227,6 +230,7 @@
 				4359E3AC28302E2500021A91 /* ChampionView.swift in Sources */,
 				4385FE98282D7E2400EAAD02 /* AppState.swift in Sources */,
 				43B04911284521570075CEC4 /* CacheRawData.swift in Sources */,
+				438B68DC285AE81200424E43 /* ImageViewer.swift in Sources */,
 				4359E3AF28302E6400021A91 /* RawDataImage.swift in Sources */,
 				4385FE82282D705C00EAAD02 /* LeagueApp.swift in Sources */,
 			);

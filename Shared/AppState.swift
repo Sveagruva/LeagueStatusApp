@@ -8,6 +8,7 @@
 import Foundation
 
 class AppState: ObservableObject {
+    @Published var path: String = "12.3.1"
     @Published var languages: [String] = []
     @Published var champions: [Champion] = []
     
