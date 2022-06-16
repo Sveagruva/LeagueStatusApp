@@ -8,17 +8,17 @@
 import Foundation
 
 class AppState: ObservableObject {
-    @Published var path: String = "12.3.1"
-    @Published var languages: [String] = []
-    @Published var champions: [Champion] = []
-    
-    init() {
-        API.getLanguages { languages in
-            self.languages = languages
-        }
-        
-        API.getChampions { champions in
-            self.champions = champions
-        }
-    }
+	@Published var path: String = "12.3.1"
+	@Published var languages: [String] = []
+	@Published var champions: [Champion] = []
+
+	init() {
+		API.getLanguages { languages in
+			self.languages = languages
+		}
+
+		API.getChampions { champions in
+			self.champions = champions
+		}
+	}
 }

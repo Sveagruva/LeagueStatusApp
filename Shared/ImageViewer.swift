@@ -8,20 +8,18 @@
 import SwiftUI
 
 struct ImageViewer: View {
-    let dta: NetworkImageReferenceData
-    let title: String
-    
-    var body: some View {
-        RawDataImage(data: dta, origin: nil)
-            .frame(minWidth: 400, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 500, maxHeight: .infinity)
-    }
-    
-    func openAsWindow() {
-        let windowView = self
-        let controller = NSHostingController(rootView: windowView)
-        let win = NSWindow(contentViewController: controller)
-        win.contentViewController = controller
-        win.title = title
-        win.makeKeyAndOrderFront(self)
-    }
+	let dta: NetworkImageReferenceData
+	let title: String
+
+	var body: some View {
+		RawDataImage(data: dta, origin: nil)
+			.frame(minWidth: 400, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 500, maxHeight: .infinity)
+	}
+
+	func openAsWindow() {
+		let controller = NSHostingController(rootView: self)
+		let win = NSWindow(contentViewController: controller)
+		win.title = title
+		win.makeKeyAndOrderFront(self)
+	}
 }
