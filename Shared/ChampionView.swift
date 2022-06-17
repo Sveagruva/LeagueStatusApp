@@ -53,19 +53,36 @@ struct ChampionView: View {
 						HStack {
 							Spacer()
 							VStack {
-								Color.clear
-								  .background(
-									  RawDataImage(data: dta, origin: selectedChampion != nil)
-								  )
-								  .frame(height: geo.size.height / 3 < 400 ? 400 : geo.size.height / 3)
-								  .clipped()
-								  .contentShape(Rectangle())
+								if(selectedChampion != nil) {
+									Color.clear
+									  .background(
+										  RawDataImage(data: dta, origin: selectedChampion != nil)
+									  )
+									  .frame(height: geo.size.height / 3 < 400 ? 400 : geo.size.height / 3)
+									  .clipped()
+									  .contentShape(Rectangle())
 
-								Text(champion.name)
-								  .font(.system(size: 70, weight: .heavy, design: .default))
-								  .minimumScaleFactor(0.1)
-								  .matchedGeometryEffect(id: champion.id + "title", in: ns, isSource: selectedChampion != nil)
-								  .frame(maxWidth: .infinity, alignment: .topLeading)
+								} else {
+									Color.clear
+									  .frame(height: geo.size.height / 3 < 400 ? 400 : geo.size.height / 3)
+									  .clipped()
+									  .contentShape(Rectangle())
+								}
+
+								if (selectedChampion != nil) {
+									Text(champion.name)
+									  .font(.system(size: 70, weight: .heavy, design: .default))
+									  .minimumScaleFactor(0.1)
+									  .matchedGeometryEffect(id: champion.id + "title", in: ns)
+									  .frame(maxWidth: .infinity, alignment: .topLeading)
+								} else {
+									Text(champion.name)
+									  .font(.system(size: 30, weight: .heavy, design: .default))
+									  .minimumScaleFactor(0.1)
+									  .opacity(0)
+								}
+
+
 
 
 								Text(champion.title)

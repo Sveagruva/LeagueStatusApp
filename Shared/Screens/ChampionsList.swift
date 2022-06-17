@@ -35,7 +35,6 @@ struct ChampionsList: View {
 			  .focused($focusState)
 			  .padding(14)
 			ChampionsListView
-			  .opacity(selectedChampion == nil ? 1 : 0)
 			  .padding(.top, 10)
 		}
 		  .padding(8)
@@ -99,8 +98,9 @@ struct ChampionsList: View {
 				}, id: \.id.self) { champion in
 					ChampionPreview(ns: ns, cache: cache, champion: champion, selectedChampion: $selectedChampion)
 					  .onTapGesture {
+						  focusState = false
+
 						  withAnimation {
-							  focusState = false
 							  selectedChampion = champion
 						  }
 					  }
@@ -138,24 +138,31 @@ struct ChampionPreview: View {
 	var body: some View {
 		ZStack {
 			VStack {
+				if (!(selectedChampion != nil && selectedChampion!.name == champion.name)) {
 					Color.clear
 					  .background(
 						  RawDataImage(data: imageStorage, origin: selectedChampion == nil)
 					  )
 					  .clipped()
 					  .contentShape(Rectangle())
+				} else {
+					Color.clear
+					  .clipped()
+					  .contentShape(Rectangle())
 
-//				if (!(selectedChampion != nil && selectedChampion!.name == champion.name)) {
+				}
+
+				if (!(selectedChampion != nil && selectedChampion!.name == champion.name)) {
 					Text(champion.name)
 					  .font(.system(size: 30, weight: .heavy, design: .default))
 					  .minimumScaleFactor(0.1)
-					  .matchedGeometryEffect(id: champion.id + "title", in: imageStorage.ns, isSource: selectedChampion == nil)
-//				} else {
-//					Text(champion.name)
-//					  .font(.system(size: 30, weight: .heavy, design: .default))
-//					  .minimumScaleFactor(0.1)
-//					  .opacity(0)
-//				}
+					  .matchedGeometryEffect(id: champion.id + "title", in: imageStorage.ns)
+				} else {
+					Text(champion.name)
+					  .font(.system(size: 30, weight: .heavy, design: .default))
+					  .minimumScaleFactor(0.1)
+					  .opacity(0)
+				}
 			}
 			  .aspectRatio(AR, contentMode: .fill)
 
