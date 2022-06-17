@@ -9,30 +9,37 @@ import Foundation
 import SwiftUI
 
 struct ChampionView: View {
-	@EnvironmentObject var cache: CacheRawData
-
+	var cache: CacheRawData
 
 	@Binding var selectedChampion: Champion?
 	let ns: Namespace.ID
 	let champion: Champion
-
 	@ObservedObject var d: D
+	let dta: NetworkImageData
 
 	class D: ObservableObject {
 		@Published var fullDataChamp: AdvancedChampionInfo? = nil
 
-		init(champion: Champion) {
+		init(champion: Champion, dta: NetworkImageData) {
 			API.getChampionFullInfo(champion: champion) { ch in
 				self.fullDataChamp = ch
 			}
 		}
 	}
 
-	init(selectedChampion: Binding<Champion?>, ns: Namespace.ID, champion: Champion) {
+	init(selectedChampion: Binding<Champion?>, cache: CacheRawData, ns: Namespace.ID, champion: Champion) {
 		self._selectedChampion = selectedChampion
 		self.champion = champion
 		self.ns = ns
-		self.d = D(champion: champion)
+
+		dta = NetworkImageData(ns: ns, id: champion.id)
+		self.cache = cache
+		let dta2 = dta
+		cache.downloadOrUseCache(url: champion.imageURL) { data in
+			dta2.data = data
+		}
+
+		d = D(champion: champion, dta: dta)
 	}
 
 
@@ -46,35 +53,30 @@ struct ChampionView: View {
 						HStack {
 							Spacer()
 							VStack {
-								let dta = NetworkImageReferenceData(ns: ns, id: champion.id)
-
-								let _ = handleImageLoad(dta: dta, url: champion.imageURL, cache: cache)
-
-
 								Color.clear
-									.background(
-										RawDataImage(data: dta, origin: selectedChampion != nil)
-									)
-									.frame(height: geo.size.height / 3 < 400 ? 400 : geo.size.height / 3)
-									.clipped()
-									.contentShape(Rectangle())
+								  .background(
+									  RawDataImage(data: dta, origin: selectedChampion != nil)
+								  )
+								  .frame(height: geo.size.height / 3 < 400 ? 400 : geo.size.height / 3)
+								  .clipped()
+								  .contentShape(Rectangle())
 
 								Text(champion.name)
-									.font(.system(size: 70, weight: .heavy, design: .default))
-									.minimumScaleFactor(0.1)
-									.matchedGeometryEffect(id: champion.id + "title", in: ns, isSource: selectedChampion != nil)
-									.frame(maxWidth: .infinity, alignment: .topLeading)
+								  .font(.system(size: 70, weight: .heavy, design: .default))
+								  .minimumScaleFactor(0.1)
+								  .matchedGeometryEffect(id: champion.id + "title", in: ns, isSource: selectedChampion != nil)
+								  .frame(maxWidth: .infinity, alignment: .topLeading)
+
 
 								Text(champion.title)
-									.font(.system(size: 36, weight: .bold, design: .default))
-									.frame(maxWidth: .infinity, alignment: .topLeading)
-
+								  .font(.system(size: 36, weight: .bold, design: .default))
+								  .frame(maxWidth: .infinity, alignment: .topLeading)
 								Spacer()
-									.frame(height: 20)
+								  .frame(height: 20)
 
 								Text(champion.blurb)
 									//                                    .font(.system(size: 36, weight: .bold, design: .default))
-									.frame(maxWidth: .infinity, alignment: .topLeading)
+								  .frame(maxWidth: .infinity, alignment: .topLeading)
 
 								if (d.fullDataChamp != nil) {
 									VStack {
@@ -84,16 +86,16 @@ struct ChampionView: View {
 //                                            .frame(maxWidth: .infinity, alignment: .topLeading)
 										HStack {
 											AsyncImage(url: URL(string: d.fullDataChamp!.passive.imageURL))
-												.frame(width: 80)
+											  .frame(width: 80)
 											Spacer()
-												.frame(width: 20)
+											  .frame(width: 20)
 											VStack {
 												Text(d.fullDataChamp!.passive.name)
-													.font(.system(size: 36, weight: .heavy, design: .default))
-													.frame(maxWidth: .infinity, alignment: .topLeading)
+												  .font(.system(size: 36, weight: .heavy, design: .default))
+												  .frame(maxWidth: .infinity, alignment: .topLeading)
 												Text(d.fullDataChamp!.passive.description)
-													.font(.system(size: 14, weight: .medium, design: .default))
-													.frame(maxWidth: .infinity, alignment: .topLeading)
+												  .font(.system(size: 14, weight: .medium, design: .default))
+												  .frame(maxWidth: .infinity, alignment: .topLeading)
 											}
 										}
 									}
@@ -104,19 +106,19 @@ struct ChampionView: View {
 											HStack {
 												Spacer()
 												Text(key)
-													.font(.system(size: 15, weight: .heavy, design: .default))
-													.frame(width: 180, alignment: .topLeading)
+												  .font(.system(size: 15, weight: .heavy, design: .default))
+												  .frame(width: 180, alignment: .topLeading)
 												Spacer()
 											}
 											Text(String(describing: champion.stats[key]!))
-												.font(.system(size: 14, weight: .medium, design: .default))
-												.frame(maxWidth: .infinity, alignment: .center)
+											  .font(.system(size: 14, weight: .medium, design: .default))
+											  .frame(maxWidth: .infinity, alignment: .center)
 										}
-											.padding(1)
+										  .padding(1)
 									}
 								}
 							}
-								.frame(maxWidth: 900)
+							  .frame(maxWidth: 900)
 							Spacer()
 						}
 
@@ -125,34 +127,37 @@ struct ChampionView: View {
 								Spacer()
 								VStack {
 									Text("Skins")
-										.font(.system(size: 34, weight: .heavy, design: .default))
-										.frame(maxWidth: .infinity, alignment: .topLeading)
+									  .font(.system(size: 34, weight: .heavy, design: .default))
+									  .frame(maxWidth: .infinity, alignment: .topLeading)
 								}
-									.frame(maxWidth: 900)
+								  .frame(maxWidth: 900)
 								Spacer()
 							}
 							HStack {
 								ScrollView(.horizontal) {
 									HStack {
 										ForEach(d.fullDataChamp!.skins, id: \.name.self) { skin in
-											let dta = NetworkImageReferenceData(ns: ns, id: champion.id)
+											let dta = NetworkImageData(ns: ns, id: champion.id)
 
-											let _ = handleImageLoad(dta: dta, url: skin.imageURL, cache: cache)
+											let _ = cache.downloadOrUseCache(url: skin.imageURL) { data in
+												dta.data = data
+											}
+
 											let height = geo.size.height / 2 < 400 ? 400 : geo.size.height / 2
 
 											VStack {
 												RawDataImage(data: dta, origin: nil)
-													.frame(width: height * 1.69, height: height)
-													#if os(macOS)
-														.onTapGesture {
-															let imageViewer = ImageViewer(dta: dta, title: skin.name == "default" ? champion.name : skin.name)
-															imageViewer.openAsWindow()
-														}
-													#endif
+												  .frame(width: height * 1.69, height: height)
+												  #if os(macOS)
+												  .onTapGesture {
+													  let imageViewer = ImageViewer(dta: dta, title: skin.name == "default" ? champion.name : skin.name)
+													  imageViewer.openAsWindow()
+												  }
+												  #endif
 
 												Text(skin.name)
-													.font(.system(size: 19, weight: .medium, design: .default))
-													.frame(maxWidth: .infinity, alignment: .center)
+												  .font(.system(size: 19, weight: .medium, design: .default))
+												  .frame(maxWidth: .infinity, alignment: .center)
 
 											}
 
@@ -160,17 +165,17 @@ struct ChampionView: View {
 //                                                .contentShape(Rectangle())
 										}
 									}
-										.padding(Edge.Set.bottom, 17)
+									  .padding(Edge.Set.bottom, 17)
 								}
 							}
-								.padding(7)
+							  .padding(7)
 						}
 
 					}
 				}
 			}
 		}
-			.padding(14)
+		  .padding(14)
 	}
 }
 

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct RawDataImage: View {
-	@ObservedObject var data: NetworkImageReferenceData
+	@ObservedObject var data: NetworkImageData
 	let origin: Bool?
 
 	var body: some View {

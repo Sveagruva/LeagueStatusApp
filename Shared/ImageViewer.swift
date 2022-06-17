@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageViewer: View {
-	let dta: NetworkImageReferenceData
+	let dta: NetworkImageData
 	let title: String
 
 	var body: some View {

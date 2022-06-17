@@ -112,12 +112,12 @@ class API {
 	static let base = "https://ddragon.leagueoflegends.com/cdn"
 	static let languagesURL = "\(API.base)/languages.json"
 
-	static private func getChampionURL(langauge: String, path: String) -> String {
-		return "\(API.base)/\(path)/data/\(langauge)/champion.json";
+	static private func getChampionURL(language: String, path: String) -> String {
+		return "\(API.base)/\(path)/data/\(language)/champion.json";
 	}
 
-	static private func getChampionSkinURL(langauge: String, path: String, name: String) -> String {
-		return "\(API.base)/\(path)/data/\(langauge)/champion/\(name).json";
+	static private func getChampionSkinURL(language: String, path: String, name: String) -> String {
+		return "\(API.base)/\(path)/data/\(language)/champion/\(name).json";
 	}
 
 	static private func getChampionSpecificSkinURL(name: String, num: Int) -> String {
@@ -127,7 +127,7 @@ class API {
 
 
 	static func getChampions(callback: @escaping ([Champion]) -> Void) {
-		guard let url = URL(string: API.getChampionURL(langauge: "en_US", path: "12.3.1")) else {
+		guard let url = URL(string: API.getChampionURL(language: "en_US", path: "12.3.1")) else {
 			return
 		}
 
@@ -193,7 +193,7 @@ class API {
 
 	static func getChampionFullInfo(champion: Champion, callback: @escaping (AdvancedChampionInfo) -> Void) {
 		guard
-			let url = URL(string: API.getChampionSkinURL(langauge: champion.language, path: champion.path, name: champion.id))
+			let url = URL(string: API.getChampionSkinURL(language: champion.language, path: champion.path, name: champion.id))
 		else {
 			return
 		}

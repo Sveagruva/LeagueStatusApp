@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-class NetworkImageReferenceData: ObservableObject {
+class NetworkImageData: ObservableObject {
 	@Published var data: Data? = nil
 	var ns: Namespace.ID
 	var id: String

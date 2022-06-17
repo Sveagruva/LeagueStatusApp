@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		364F556820B12E56747842BE /* ChampionsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F54DF15A384925FC48139 /* ChampionsList.swift */; };
+		364F58AA628EC78A213CE29A /* ChampionsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F54DF15A384925FC48139 /* ChampionsList.swift */; };
 		4359E3A828301E4600021A91 /* NetworkImageReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4359E3A728301E4600021A91 /* NetworkImageReference.swift */; };
 		4359E3A928301E4600021A91 /* NetworkImageReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4359E3A728301E4600021A91 /* NetworkImageReference.swift */; };
 		4359E3AB28302E2500021A91 /* ChampionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4359E3AA28302E2500021A91 /* ChampionView.swift */; };
@@ -29,6 +31,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		364F54DF15A384925FC48139 /* ChampionsList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChampionsList.swift; sourceTree = "<group>"; };
 		4359E3A728301E4600021A91 /* NetworkImageReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkImageReference.swift; sourceTree = "<group>"; };
 		4359E3AA28302E2500021A91 /* ChampionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChampionView.swift; sourceTree = "<group>"; };
 		4359E3AD28302E6400021A91 /* RawDataImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawDataImage.swift; sourceTree = "<group>"; };
@@ -63,6 +66,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		364F5B42AD2DFBAB92C4E365 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				364F54DF15A384925FC48139 /* ChampionsList.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
 		4385FE6B282D705900EAAD02 = {
 			isa = PBXGroup;
 			children = (
@@ -84,6 +95,7 @@
 				4359E3AA28302E2500021A91 /* ChampionView.swift */,
 				4359E3AD28302E6400021A91 /* RawDataImage.swift */,
 				43B0490F284521570075CEC4 /* CacheRawData.swift */,
+				364F5B42AD2DFBAB92C4E365 /* Screens */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -217,6 +229,7 @@
 				43B04910284521570075CEC4 /* CacheRawData.swift in Sources */,
 				4359E3AE28302E6400021A91 /* RawDataImage.swift in Sources */,
 				4385FE97282D7E2400EAAD02 /* AppState.swift in Sources */,
+				364F556820B12E56747842BE /* ChampionsList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,6 +246,7 @@
 				438B68DC285AE81200424E43 /* ImageViewer.swift in Sources */,
 				4359E3AF28302E6400021A91 /* RawDataImage.swift in Sources */,
 				4385FE82282D705C00EAAD02 /* LeagueApp.swift in Sources */,
+				364F58AA628EC78A213CE29A /* ChampionsList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

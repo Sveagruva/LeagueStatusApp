@@ -8,43 +8,46 @@
 import Foundation
 import Combine
 
-// ObservableObject because env obj. render logic on the user
 class CacheRawData: ObservableObject {
-	var datas: [String: Data] = [:]
-//    var pubs: [String: (Result<Data, Never>) -> Void] = [:]
+	var cachedData: [String: Data] = [:]
 	var waitingFor: [String: Bool] = [:]
 	var addons: [String: [(Data) -> Void]] = [:]
 
-	init() {
+	init() {}
 
+	func downloadOrUseCache(url: String, addon: @escaping (Data) -> Void) {
+		useDataWhenReady(key: url, addon: addon)
+		if (waitingFor[url] != true) {
+			downloadToCache(url: url)
+		}
 	}
 
-	func createDependency(url: String) -> Void {
+	private func downloadToCache(url: String) -> Void {
 		waitingFor[url] = true
 		API.download(url: url) { [weak self] data in
 			guard let `self` = self else {
 				return
 			}
 
-			self.datas[url] = data
+			self.cachedData[url] = data
 			self.waitingFor.removeValue(forKey: url)
-			self.addons[url]!.forEach { addon in
-//                DispatchQueue.main.sync {
+
+
+			guard let addons = self.addons[url] else {
+				return
+			}
+
+			self.addons.removeValue(forKey: url)
+			addons.forEach { addon in
 				addon(data)
-//                }
 			}
 		}
 	}
 
-	func isDependency(key: String) -> Bool {
-		return waitingFor[key] == true
-	}
-
-	func addToDependency(key: String, addon: @escaping (Data) -> Void) -> Void {
-		if (!self.isDependency(key: key)) {
-			addon(self.get(key: key)!)
+	private func useDataWhenReady(key: String, addon: @escaping (Data) -> Void) -> Void {
+		if (cachedData[key] != nil) {
+			addon(cachedData[key]!)
 		} else {
-
 			if addons[key] == nil {
 				addons[key] = []
 			}
@@ -53,21 +56,5 @@ class CacheRawData: ObservableObject {
 				addon
 			)
 		}
-	}
-
-//    func set(key: String, data: Data) {
-//        let future = futures[key]
-//
-//        if(future != nil) {
-//            print("set clearing")
-//            futures[key] = nil
-//            addons[key] = []
-//        }
-//
-//        datas[key] = data
-//    }
-
-	func get(key: String) -> Data? {
-		return datas[key]
 	}
 }
