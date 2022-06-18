@@ -53,7 +53,7 @@ struct ChampionView: View {
 						HStack {
 							Spacer()
 							VStack {
-								if(selectedChampion != nil) {
+								if (selectedChampion != nil) {
 									Color.clear
 									  .background(
 										  RawDataImage(data: dta, origin: selectedChampion != nil)
@@ -117,21 +117,25 @@ struct ChampionView: View {
 										}
 									}
 								}
+
 								VStack {
-									ForEach(Array(champion.stats.keys), id: \.self) { key in
-										HStack {
+									LazyVGrid(
+										columns: [GridItem(.flexible()), GridItem(.flexible())],
+										alignment: .center,
+										spacing: 7
+									) {
+										ForEach(Array(champion.stats.keys), id: \.self) { key in
 											HStack {
 												Spacer()
 												Text(key)
-												  .font(.system(size: 15, weight: .heavy, design: .default))
-												  .frame(width: 180, alignment: .topLeading)
+												  .font(.system(size: 17, weight: .heavy, design: .default))
+												  .frame(width: 200, alignment: .leading)
 												Spacer()
 											}
 											Text(String(describing: champion.stats[key]!))
-											  .font(.system(size: 14, weight: .medium, design: .default))
-											  .frame(maxWidth: .infinity, alignment: .center)
+											  .font(.system(size: 15, weight: .medium, design: .default))
+
 										}
-										  .padding(1)
 									}
 								}
 							}
