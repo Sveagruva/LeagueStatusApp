@@ -8,8 +8,19 @@
 import Foundation
 import SwiftUI
 
+class PublishedImageData: ObservableObject {
+	@Published var data: Data? = nil
+	var ns: Namespace.ID
+	var id: String
+
+	init(ns: Namespace.ID, id: String) {
+		self.ns = ns
+		self.id = id
+	}
+}
+
 struct RawDataImage: View {
-	@ObservedObject var data: NetworkImageData
+	@ObservedObject var data: PublishedImageData
 	let origin: Bool?
 
 	var body: some View {

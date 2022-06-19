@@ -117,7 +117,7 @@ struct ChampionPreview: View {
 	var champion: Champion
 	@Binding var selectedChampion: Champion?
 
-	let imageStorage: NetworkImageData
+	let imageStorage: PublishedImageData
 	let AR = 0.8
 	var cache: CacheRawData
 
@@ -127,7 +127,7 @@ struct ChampionPreview: View {
 		self._selectedChampion = selectedChampion
 		self.cache = cache
 
-		imageStorage = NetworkImageData(ns: ns, id: champion.id)
+		imageStorage = PublishedImageData(ns: ns, id: champion.id)
 		let dta = imageStorage
 		cache.downloadOrUseCache(url: champion.imageURL) { data in
 			dta.data = data

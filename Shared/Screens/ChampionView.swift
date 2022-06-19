@@ -15,12 +15,12 @@ struct ChampionView: View {
 	let ns: Namespace.ID
 	let champion: Champion
 	@ObservedObject var d: D
-	let dta: NetworkImageData
+	let dta: PublishedImageData
 
 	class D: ObservableObject {
 		@Published var fullDataChamp: AdvancedChampionInfo? = nil
 
-		init(champion: Champion, dta: NetworkImageData) {
+		init(champion: Champion, dta: PublishedImageData) {
 			API.getChampionFullInfo(champion: champion) { ch in
 				self.fullDataChamp = ch
 			}
@@ -32,7 +32,7 @@ struct ChampionView: View {
 		self.champion = champion
 		self.ns = ns
 
-		dta = NetworkImageData(ns: ns, id: champion.id)
+		dta = PublishedImageData(ns: ns, id: champion.id)
 		self.cache = cache
 		let dta2 = dta
 		cache.downloadOrUseCache(url: champion.imageURL) { data in
@@ -79,9 +79,6 @@ struct ChampionView: View {
 								  .opacity(0)
 							}
 
-
-
-
 							Text(champion.title)
 							  .font(.system(size: 36, weight: .bold, design: .default))
 							  .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -89,7 +86,6 @@ struct ChampionView: View {
 							  .frame(height: 20)
 
 							Text(champion.blurb)
-								//                                    .font(.system(size: 36, weight: .bold, design: .default))
 							  .frame(maxWidth: .infinity, alignment: .topLeading)
 
 							if (d.fullDataChamp != nil) {
@@ -155,7 +151,7 @@ struct ChampionView: View {
 							ScrollView(.horizontal) {
 								HStack {
 									ForEach(d.fullDataChamp!.skins, id: \.name.self) { skin in
-										let dta = NetworkImageData(ns: ns, id: champion.id)
+										let dta = PublishedImageData(ns: ns, id: champion.id)
 
 										let _ = cache.downloadOrUseCache(url: skin.imageURL) { data in
 											dta.data = data
