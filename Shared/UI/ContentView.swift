@@ -13,11 +13,10 @@ struct ContentView: View {
 	@EnvironmentObject var cache: CacheRawData
 
 	var body: some View {
-//		NavigationView {
-//			VStack {
-//				Text("hi")
-//			}
-			ChampionsList()
-//		}
+		if(UserDefaults.standard.string(forKey: "chosenPath") == "") {
+			SetUpView()
+		} else {
+			ChampionsListView(path: state.chosenPath)
+		}
 	}
 }

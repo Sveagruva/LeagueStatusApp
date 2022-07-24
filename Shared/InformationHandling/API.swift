@@ -8,109 +8,10 @@
 import Foundation
 import SwiftUI
 
-
-protocol Tracable {
-	var language: String { get }
-	var path: String { get }
-}
-
-
-//struct Stats: Codable {
-//    let hp: Float
-//    let hpperlevel: Float
-//    let mp: Float
-//    let mpperlevel: Float
-//    let movespeed: Float
-//    let armor: Float
-//    let armorperlevel: Float
-//    let spellblock: Float
-//    let spellblockperlevel: Float
-//    let attackrange: Float
-//    let hpregen: Float
-//    let hpregenperlevel: Float
-//    let mpregen: Float
-//    let mpregenperlevel: Float
-//    let crit: Float
-//    let critperlevel: Float
-//    let attackdamage: Float
-//    let attackdamageperlevel: Float
-//    let attackspeedperlevel: Float
-//    let attackspeed: Float
-//}
-
-struct Champion: Tracable {
-	let language: String
-	let path: String
-
-	let name: String
-	let id: String
-	let title: String
-	let blurb: String
-	let stats: [String: Float]
-
-	//https://ddragon.leagueoflegends.com/cdn/5.9.1/img/passive/Ezreal_RisingSpellForce.png
-	var imageURL: String {
-		get {
-			let img = id == "Fiddlesticks" ? "FiddleSticks" : id
-			return "\(API.base)/img/champion/centered/\(img)_0.jpg"
-		}
-	}
-//    let imageURL: String
-//    static func createImageURL(name: String) {
-//        "\(API.base)/\(path)/img/passive/\(name)"
-//    }
-}
-
-struct AdvancedChampionInfo: Tracable {
-	let basicChampion: Champion
-
-	var path: String {
-		get {
-			basicChampion.path
-		}
-	}
-
-	var language: String {
-		get {
-			basicChampion.language
-		}
-	}
-
-	var passive: Passive
-	var skins: [Skin]
-
-	struct Skin {
-		let num: Int
-		let name: String
-		let imageURL: String
-
-//        lazy var imageURL: String = {
-//            "\(API.base)/\(path)/img/passive/\(image)"
-//        }()
-	}
-
-	struct Passive: Tracable {
-		let language: String
-		let path: String
-
-		let name: String
-		let description: String
-		let image: String
-
-		var imageURL: String {
-			get {
-				"\(API.base)/\(path)/img/passive/\(image)"
-			}
-		}
-//        lazy var imageURL: String = {
-//            "\(API.base)/\(path)/img/passive/\(image)"
-//        }()
-	}
-}
-
 class API {
 	static let base = "https://ddragon.leagueoflegends.com/cdn"
 	static let languagesURL = "\(API.base)/languages.json"
+	static let patchesURL = "https://ddragon.leagueoflegends.com/api/versions.json"
 
 	static private func getChampionURL(language: String, path: String) -> String {
 		return "\(API.base)/\(path)/data/\(language)/champion.json";
@@ -126,8 +27,8 @@ class API {
 
 
 
-	static func getChampions(callback: @escaping ([Champion]) -> Void) {
-		guard let url = URL(string: API.getChampionURL(language: "en_US", path: "12.3.1")) else {
+	static func getChampions(path: String, callback: @escaping ([Champion]) -> Void) {
+		guard let url = URL(string: API.getChampionURL(language: "en_US", path: path)) else {
 			return
 		}
 
@@ -175,7 +76,7 @@ class API {
 				var realShit: [Champion] = []
 				for (_, value) in json.data {
 					realShit.append(Champion(
-						language: "en_US", path: "12.3.1", name: value.name, id: value.id, title: value.title, blurb: value.blurb, stats: value.stats
+						language: "en_US", path: path, name: value.name, id: value.id, title: value.title, blurb: value.blurb, stats: value.stats
 					))
 //                    break
 				}
@@ -245,8 +146,31 @@ class API {
 						AdvancedChampionInfo.Skin(num: s.num, name: s.name, imageURL: API.getChampionSpecificSkinURL(name: champion.id, num: s.num))
 					})
 
-					let advChamp = AdvancedChampionInfo(basicChampion: champion, passive: passive, skins: skins)
+					let advChamp = AdvancedChampionInfo(champion: champion, passive: passive, skins: skins)
 					callback(advChamp)
+				}
+			} catch {
+				print("cannot decode shit \(error)")
+			}
+		})
+
+		task.resume()
+	}
+
+	static func getPatches(callback: @escaping ([String]) -> Void) {
+		let url = URL(string: patchesURL)!
+
+		let task = URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
+			do {
+				guard let data = data, error == nil else {
+					print("cannot request shit \(error!)")
+					return
+				}
+
+				let json: [String] = try JSONDecoder().decode([String].self, from: data)
+
+				DispatchQueue.main.sync {
+					callback(json)
 				}
 			} catch {
 				print("cannot decode shit \(error)")

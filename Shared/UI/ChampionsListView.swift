@@ -15,7 +15,9 @@ import Foundation
 import SwiftUI
 
 
-struct ChampionsList: View {
+struct ChampionsListView: View {
+	var path: String
+
 	@EnvironmentObject var state: AppState
 	@EnvironmentObject var cache: CacheRawData
 
@@ -25,17 +27,40 @@ struct ChampionsList: View {
 	@FocusState private var focusState: Bool
 
 	@State private var selectedChampion: Champion?
+	@ObservedObject var d: D
+
+
+	// no, im not doing it the correct way
+	class D: ObservableObject {
+		@Published var champs: [Champion]? = nil
+
+		init(path: String) {
+			DataProvider.getChampions(path: path) { champions in
+				DispatchQueue.main.async { [self] in
+					champs = champions
+				}
+			}
+		}
+	}
 
 //    @State private var currentData: NetworkImageReferenceData?
 
+	init(path: String) {
+		self.path = path
+		d = D(path: path)
+	}
+
 	var body: some View {
 		VStack {
-//                    Text("PATH: \(Settings.path)")
+			Text("PATH: \(state.$chosenPath.wrappedValue)")
 			TextField("Name", text: $searchInput)
 			  .focused($focusState)
 			  .padding(14)
-			ChampionsListView
-			  .padding(.top, 10)
+			if(d.champs != nil) {
+				ChampionsListView
+				  .padding(.top, 10)
+			}
+
 		}
 		  .padding(8)
 		  .overlay {
@@ -89,7 +114,7 @@ struct ChampionsList: View {
 			let gap: CGFloat = 28
 
 			LazyVGrid(columns: [.init(.adaptive(minimum: 350, maximum: 600), spacing: gap)], spacing: gap) {
-				ForEach(state.champions.filter { champion in
+				ForEach(d.champs!.filter { champion in
 					if (searchInput.isEmpty) {
 						return true
 					}

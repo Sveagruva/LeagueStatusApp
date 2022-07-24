@@ -21,7 +21,9 @@ struct LeagueApp: App {
 
 		#if os(macOS)
 		Settings {
-			Text("Settings here.")
+			SettingsView()
+			  .environmentObject(state)
+			  .frame(width: SettingsView.widthMin)
 		}
 		#endif
 	}
