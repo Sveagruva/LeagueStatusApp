@@ -46,10 +46,17 @@ struct ChampionsListView: View {
 
 	var body: some View {
 		VStack {
-			Text("PATH: \(state.$chosenPath.wrappedValue)")
-			TextField("Name", text: $searchInput)
-			  .focused($focusState)
+			HStack {
+				TextField("Name", text: $searchInput)
+				  .focused($focusState)
+
+				Spacer()
+				  .frame(width: 20)
+
+				Text("PATH: \(state.$chosenPath.wrappedValue)")
+			}
 			  .padding(14)
+
 			if(model.champs != nil) {
 				ChampionsListView
 				  .padding(.top, 10)
