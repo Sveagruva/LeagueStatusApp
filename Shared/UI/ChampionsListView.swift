@@ -57,13 +57,16 @@ struct ChampionsListView: View {
 			}
 			  .padding(14)
 
-			if(model.champs != nil) {
+			if (model.champs != nil) {
 				ChampionsListView
 				  .padding(.top, 10)
 			}
 
 		}
 		  .padding(8)
+		  .onChange(of: state.chosenPath) { newValue in
+			  model.selectedChampion = nil
+		  }
 		  .overlay {
 			  if (model.selectedChampion != nil) {
 				  SelectedChampionView
@@ -114,14 +117,18 @@ struct ChampionsListView: View {
 		ScrollView {
 			let gap: CGFloat = 28
 
-			LazyVGrid(columns: [.init(.adaptive(minimum: 350, maximum: 600), spacing: gap)], spacing: gap) {
-				ForEach(model.champs!.filter { champion in
-					if (searchInput.isEmpty) {
-						return true
-					}
+			let champions = model.champs!
+			  .filter({ champion in
+				  if (searchInput.isEmpty) {
+					  return true
+				  }
 
-					return champion.name.lowercased().starts(with: searchInput.lowercased())
-				}, id: \.id.self) { champion in
+				  return champion.name.lowercased().starts(with: searchInput.lowercased())
+			  })
+			  .sorted(by: { $0.name < $1.name })
+
+			LazyVGrid(columns: [.init(.adaptive(minimum: 350, maximum: 600), spacing: gap)], spacing: gap) {
+				ForEach(champions, id: \.id.self) { champion in
 					ChampionPreview(ns: ns, cache: cache, champion: champion, selectedChampion: $model.selectedChampion)
 					  .onTapGesture {
 						  focusState = false

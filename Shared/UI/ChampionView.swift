@@ -46,7 +46,6 @@ struct ChampionView: View {
 	let AR = 0.8
 
 	var body: some View {
-
 		VStack {
 			ScrollView {
 				VStack {

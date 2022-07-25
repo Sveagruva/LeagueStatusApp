@@ -16,7 +16,7 @@ class AppState: ObservableObject {
 	@Published var languages: [String] = []
 //	@Published var champions: [Champion] = []
 	@Published var patches: [String] = []
-	@Published var isRequestingPatches: Bool = false
+	var isRequestingPatches: Bool = false
 	var firstTime: Bool = true
 
 	func getPatches() {
