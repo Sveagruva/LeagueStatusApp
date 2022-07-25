@@ -16,23 +16,9 @@ import SwiftUI
 
 
 struct ChampionsListView: View {
-	var path: String
-
-	@EnvironmentObject var state: AppState
-	@EnvironmentObject var cache: CacheRawData
-
-	@Namespace var ns
-
-	@State private var searchInput: String = ""
-	@FocusState private var focusState: Bool
-
-	@State private var selectedChampion: Champion?
-	@ObservedObject var d: D
-
-
-	// no, im not doing it the correct way
-	class D: ObservableObject {
+	class ChampionListModel: ObservableObject {
 		@Published var champs: [Champion]? = nil
+		@Published var selectedChampion: Champion?
 
 		init(path: String) {
 			DataProvider.getChampions(path: path) { champions in
@@ -43,11 +29,19 @@ struct ChampionsListView: View {
 		}
 	}
 
-//    @State private var currentData: NetworkImageReferenceData?
+	@ObservedObject var model: ChampionListModel
+
+	@EnvironmentObject var state: AppState
+	@EnvironmentObject var cache: CacheRawData
+
+
+	@Namespace var ns
+
+	@State private var searchInput: String = ""
+	@FocusState private var focusState: Bool
 
 	init(path: String) {
-		self.path = path
-		d = D(path: path)
+		model = ChampionListModel(path: path)
 	}
 
 	var body: some View {
@@ -56,7 +50,7 @@ struct ChampionsListView: View {
 			TextField("Name", text: $searchInput)
 			  .focused($focusState)
 			  .padding(14)
-			if(d.champs != nil) {
+			if(model.champs != nil) {
 				ChampionsListView
 				  .padding(.top, 10)
 			}
@@ -64,7 +58,7 @@ struct ChampionsListView: View {
 		}
 		  .padding(8)
 		  .overlay {
-			  if (selectedChampion != nil) {
+			  if (model.selectedChampion != nil) {
 				  SelectedChampionView
 			  }
 		  }
@@ -74,7 +68,7 @@ struct ChampionsListView: View {
 	var SelectedChampionView: some View {
 		ZStack {
 			VStack {
-				ChampionView(selectedChampion: $selectedChampion, cache: cache, ns: ns, champion: selectedChampion!)
+				ChampionView(selectedChampion: $model.selectedChampion, cache: cache, ns: ns, champion: model.selectedChampion!)
 			}
 			  .background(.background)
 
@@ -83,7 +77,7 @@ struct ChampionsListView: View {
 					Spacer()
 					Button(action: {
 						withAnimation {
-							selectedChampion = nil
+							model.selectedChampion = nil
 						}
 					}) {
 						HStack {
@@ -114,19 +108,19 @@ struct ChampionsListView: View {
 			let gap: CGFloat = 28
 
 			LazyVGrid(columns: [.init(.adaptive(minimum: 350, maximum: 600), spacing: gap)], spacing: gap) {
-				ForEach(d.champs!.filter { champion in
+				ForEach(model.champs!.filter { champion in
 					if (searchInput.isEmpty) {
 						return true
 					}
 
 					return champion.name.lowercased().starts(with: searchInput.lowercased())
 				}, id: \.id.self) { champion in
-					ChampionPreview(ns: ns, cache: cache, champion: champion, selectedChampion: $selectedChampion)
+					ChampionPreview(ns: ns, cache: cache, champion: champion, selectedChampion: $model.selectedChampion)
 					  .onTapGesture {
 						  focusState = false
 
 						  withAnimation {
-							  selectedChampion = champion
+							  model.selectedChampion = champion
 						  }
 					  }
 				}
