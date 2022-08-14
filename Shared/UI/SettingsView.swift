@@ -8,6 +8,7 @@ import UserNotifications
 
 struct SettingsView: View {
 	@EnvironmentObject var state: AppState
+	@EnvironmentObject var settingsState: SettingsState
 	@State var chosenPath: String = UserDefaults.standard.string(forKey: "chosenPath") ?? ""
 	@State var errorMsg: String? = nil
 	static let widthMin = CGFloat(270)
@@ -22,7 +23,7 @@ struct SettingsView: View {
 				ProgressView()
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 		} else {
-			if(chosenPath == "" && state.patches.count > 0 && state.doUseLatestPath) {
+			if(chosenPath == "" && state.patches.count > 0 && settingsState.doUseLatestPath) {
 				let _ = chosenPath = state.patches[0]
 			}
 
@@ -47,18 +48,18 @@ struct SettingsView: View {
 			Text("Path: \(chosenPath == "" ? "not set" : chosenPath)")
 			Text("Latest Path: \(state.patches.count > 0 ? state.patches[0] : "loading latest path")")
 			Form {
-				Toggle("Use latest path", isOn: $state.doUseLatestPath)
+				Toggle("Use latest path", isOn: $settingsState.doUseLatestPath)
 			}
 			  .padding(5)
 			  // if doUseLatestPath is true then set chosenPath to latest path
-			  .onChange(of: state.doUseLatestPath) { (newValue) in
+			  .onChange(of: settingsState.doUseLatestPath) { (newValue) in
 				  if(newValue) {
 					  chosenPath = state.patches[0]
 				  }
 			  }
 
 			// if doUseLatestPath is false then show the path picker from state.patches
-			if(!state.doUseLatestPath) {
+			if(!settingsState.doUseLatestPath) {
 				Picker("Path", selection: $chosenPath) {
 					ForEach(state.patches, id: \.self) { path in
 						Text(path)
@@ -71,7 +72,7 @@ struct SettingsView: View {
 
 			HStack {
 				Button(action: {
-					state.chosenPath = ""
+					settingsState.chosenPath = ""
 				}, label: {
 					Text("Reset")
 				})
@@ -79,16 +80,16 @@ struct SettingsView: View {
 				Spacer()
 
 				Button(action: {
-					if(state.doUseLatestPath) {
+					if(settingsState.doUseLatestPath) {
 						if(state.patches.count > 0) {
-							state.chosenPath = state.patches[0]
+							settingsState.chosenPath = state.patches[0]
 							errorMsg = nil
 						} else {
 							errorMsg = "Latest path not loaded"
 						}
 					} else {
 						if(chosenPath != ""){
-							state.chosenPath = chosenPath
+							settingsState.chosenPath = chosenPath
 							errorMsg = nil
 						} else {
 							errorMsg = "Choose a path"

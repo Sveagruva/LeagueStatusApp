@@ -21,11 +21,13 @@
 		364F563D8645742A0FBBB578 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F553F9F9764031444AE08 /* SettingsView.swift */; };
 		364F57C88B88AFEEA7295631 /* DataClases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F5AD9F90A11EF58311138 /* DataClases.swift */; };
 		364F5830A483CE2FCF747E82 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F556B1E0392805BCE507E /* API.swift */; };
+		364F584D4DE4B7D971E74036 /* SettingsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F500A586C834CA6E7DEAD /* SettingsState.swift */; };
 		364F58AA628EC78A213CE29A /* ChampionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F54DF15A384925FC48139 /* ChampionsListView.swift */; };
 		364F58ED89B85ED4D4F4B2C0 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F568BD3A319B8FEED75DB /* AppState.swift */; };
 		364F58EDF31318396ABF6396 /* SetUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F521FA465AF99DADF5ACE /* SetUpView.swift */; };
 		364F58FB6EB7ED255B1F015A /* RawDataImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F5E276B5AB32B59652EE6 /* RawDataImage.swift */; };
 		364F5B326D31990387FA91E8 /* ChampionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F5C0612AA4CF1447A3C1B /* ChampionView.swift */; };
+		364F5CAE74CB3C58EF9B5917 /* SettingsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F500A586C834CA6E7DEAD /* SettingsState.swift */; };
 		364F5E3A3180D7A2EBC3D40B /* ChampionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F5C0612AA4CF1447A3C1B /* ChampionView.swift */; };
 		364F5F0529A6FF3ECF624C1B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F568BD3A319B8FEED75DB /* AppState.swift */; };
 		364F5F376AFD66EA5DC4F4E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F553F9F9764031444AE08 /* SettingsView.swift */; };
@@ -37,6 +39,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		364F500A586C834CA6E7DEAD /* SettingsState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsState.swift; sourceTree = "<group>"; };
 		364F521FA465AF99DADF5ACE /* SetUpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetUpView.swift; sourceTree = "<group>"; };
 		364F53EC8983FF4A141D0251 /* CacheRawData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheRawData.swift; sourceTree = "<group>"; };
 		364F54DF15A384925FC48139 /* ChampionsListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChampionsListView.swift; sourceTree = "<group>"; };
@@ -103,6 +106,7 @@
 				364F568BD3A319B8FEED75DB /* AppState.swift */,
 				364F53EC8983FF4A141D0251 /* CacheRawData.swift */,
 				364F556B1E0392805BCE507E /* API.swift */,
+				364F500A586C834CA6E7DEAD /* SettingsState.swift */,
 			);
 			path = InformationHandling;
 			sourceTree = "<group>";
@@ -261,6 +265,7 @@
 				364F51607B37DC8D605ECAB7 /* API.swift in Sources */,
 				364F5046CED781B8954B3787 /* RawDataImage.swift in Sources */,
 				364F53072878EA08876C9750 /* ContentView.swift in Sources */,
+				364F5CAE74CB3C58EF9B5917 /* SettingsState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +286,7 @@
 				364F5830A483CE2FCF747E82 /* API.swift in Sources */,
 				364F58FB6EB7ED255B1F015A /* RawDataImage.swift in Sources */,
 				364F530ECC0F8FD85B6E7D98 /* ContentView.swift in Sources */,
+				364F584D4DE4B7D971E74036 /* SettingsState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

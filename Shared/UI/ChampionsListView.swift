@@ -19,9 +19,23 @@ struct ChampionsListView: View {
 	class ChampionListModel: ObservableObject {
 		@Published var champs: [Champion]? = nil
 		@Published var selectedChampion: Champion?
+		@Published var selectedPath: String
+
+
+		@EnvironmentObject var state: AppState
+		@AppStorage("chosenLanguage") var chosenLanguage: String = "en_US"
+        @AppStorage("chosenPath") var globalPath: String = ""
+
 
 		init(path: String) {
-			DataProvider.getChampions(path: path) { champions in
+			self.selectedPath = path
+
+			setPath(path: path)
+		}
+
+		func setPath(path: String) {
+			selectedPath = path
+			DataProvider.getChampions(path: path, language: chosenLanguage) { champions in
 				DispatchQueue.main.async { [self] in
 					champs = champions
 				}
@@ -53,7 +67,15 @@ struct ChampionsListView: View {
 				Spacer()
 				  .frame(width: 20)
 
-				Text("PATH: \(state.$chosenPath.wrappedValue)")
+				Text("PATH: \(model.selectedPath)")
+
+				if(model.globalPath != model.selectedPath) {
+					Button(action: {
+						model.setPath(path: model.globalPath)
+					}, label: {
+						Text("Update")
+					})
+				}
 			}
 			  .padding(14)
 
@@ -64,8 +86,15 @@ struct ChampionsListView: View {
 
 		}
 		  .padding(8)
-		  .onChange(of: state.chosenPath) { newValue in
-			  model.selectedChampion = nil
+          .onChange(of: model.selectedPath) { newValue in
+			  if(model.selectedChampion != nil) {
+				  withAnimation {
+					  model.selectedChampion = nil
+				  }
+			  }
+		  }
+		  .onChange(of: state.chosenLanguage) { newValue in
+			  model.setPath(path: model.selectedPath)
 		  }
 		  .overlay {
 			  if (model.selectedChampion != nil) {

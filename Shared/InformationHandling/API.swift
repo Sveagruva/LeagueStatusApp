@@ -27,8 +27,8 @@ class API {
 
 
 
-	static func getChampions(path: String, callback: @escaping ([Champion]) -> Void) {
-		guard let url = URL(string: API.getChampionURL(language: "en_US", path: path)) else {
+	static func getChampions(path: String, language: String, callback: @escaping ([Champion]) -> Void) {
+		guard let url = URL(string: API.getChampionURL(language: language, path: path)) else {
 			return
 		}
 
@@ -76,7 +76,7 @@ class API {
 				var realShit: [Champion] = []
 				for (_, value) in json.data {
 					realShit.append(Champion(
-						language: "en_US", path: path, name: value.name, id: value.id, title: value.title, blurb: value.blurb, stats: value.stats
+						language: language, path: path, name: value.name, id: value.id, title: value.title, blurb: value.blurb, stats: value.stats
 					))
 //                    break
 				}

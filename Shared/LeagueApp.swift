@@ -11,18 +11,21 @@ import SwiftUI
 struct LeagueApp: App {
 	var body: some Scene {
 		let state = AppState()
+		let settings = SettingsState()
 
 		WindowGroup {
 			ContentView()
-				.frame(minWidth: 400, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 500, maxHeight: .infinity)
-				.environmentObject(state)
-				.environmentObject(CacheRawData())
+			  .frame(minWidth: 400, idealWidth: 500, maxWidth: .infinity, minHeight: 400, idealHeight: 500, maxHeight: .infinity)
+			  .environmentObject(state)
+			  .environmentObject(settings)
+			  .environmentObject(CacheRawData())
 		}
 
 		#if os(macOS)
 		Settings {
 			SettingsView()
 			  .environmentObject(state)
+			  .environmentObject(settings)
 			  .frame(width: SettingsView.widthMin)
 		}
 		#endif

@@ -9,15 +9,12 @@ import Foundation
 import SwiftUI
 
 class AppState: ObservableObject {
-	@AppStorage("chosenPath") var chosenPath: String = ""
-	@AppStorage("chosenLanguage") var chosenLanguage: String = "en_US"
-	@AppStorage("doUseLatestPath") var doUseLatestPath: Bool = true
-
 	@Published var languages: [String] = []
-//	@Published var champions: [Champion] = []
 	@Published var patches: [String] = []
 	var isRequestingPatches: Bool = false
 	var firstTime: Bool = true
+
+	@AppStorage("chosenLanguage") var chosenLanguage: String = "en_US"
 
 	func getPatches() {
 		firstTime = false
