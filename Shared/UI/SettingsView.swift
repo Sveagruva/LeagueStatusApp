@@ -15,17 +15,17 @@ struct SettingsView: View {
 	static let widthMin = CGFloat(270)
 
 	var body: some View {
-		if(state.firstTime) {
-			let _ = state.updateServerKeys()
+		if(settingsState.firstTime) {
+			let _ = settingsState.updateServerKeys()
 		}
 
-		if(state.isRequestingPatches || state.isRequestingLanguages) {
+		if(settingsState.isRequestingPatches || settingsState.isRequestingLanguages) {
 			// progress indicator
 				ProgressView()
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 		} else {
-			if(chosenPath == "" && state.patches.count > 0 && settingsState.doUseLatestPath) {
-				let _ = chosenPath = state.patches[0]
+			if(chosenPath == "" && settingsState.patches.count > 0 && settingsState.doUseLatestPath) {
+				let _ = chosenPath = settingsState.patches[0]
 			}
 
 			HStack {
@@ -47,7 +47,7 @@ struct SettingsView: View {
 			  .frame(height: 0)
 
 			Text("Path: \(chosenPath == "" ? "not set" : chosenPath)")
-			Text("Latest Path: \(state.patches.count > 0 ? state.patches[0] : "loading latest path")")
+			Text("Latest Path: \(settingsState.patches.count > 0 ? settingsState.patches[0] : "loading latest path")")
 			Form {
 				Toggle("Use latest path", isOn: $settingsState.doUseLatestPath)
 			}
@@ -55,14 +55,14 @@ struct SettingsView: View {
 			  // if doUseLatestPath is true then set chosenPath to latest path
 			  .onChange(of: settingsState.doUseLatestPath) { (newValue) in
 				  if(newValue) {
-					  chosenPath = state.patches[0]
+					  chosenPath = settingsState.patches[0]
 				  }
 			  }
 
 			// if doUseLatestPath is false then show the path picker from state.patches
 			if(!settingsState.doUseLatestPath) {
 				Picker("Path", selection: $chosenPath) {
-					ForEach(state.patches, id: \.self) { path in
+					ForEach(settingsState.patches, id: \.self) { path in
 						Text(path)
 					}
 				}
@@ -71,9 +71,9 @@ struct SettingsView: View {
 			Spacer()
 			  .frame(height: 30)
 
-			if(state.languages.count > 0) {
+			if(settingsState.languages.count > 0) {
 				Picker("Language", selection: $chosenLanguage) {
-					ForEach(state.languages, id: \.self) { language in
+					ForEach(settingsState.languages, id: \.self) { language in
 						Text(language)
 					}
 				}
@@ -93,8 +93,8 @@ struct SettingsView: View {
 
 				Button(action: {
 					if(settingsState.doUseLatestPath) {
-						if(state.patches.count > 0) {
-							settingsState.chosenPath = state.patches[0]
+						if(settingsState.patches.count > 0) {
+							settingsState.chosenPath = settingsState.patches[0]
 							errorMsg = nil
 						} else {
 							errorMsg = "Latest path not loaded"
@@ -108,8 +108,8 @@ struct SettingsView: View {
 						}
 					}
 
-					if(state.chosenLanguage != chosenLanguage) {
-						state.chosenLanguage = chosenLanguage
+					if(settingsState.chosenLanguage != chosenLanguage) {
+						settingsState.chosenLanguage = chosenLanguage
 					}
 
 
