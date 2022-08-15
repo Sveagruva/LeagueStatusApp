@@ -10,15 +10,16 @@ struct SettingsView: View {
 	@EnvironmentObject var state: AppState
 	@EnvironmentObject var settingsState: SettingsState
 	@State var chosenPath: String = UserDefaults.standard.string(forKey: "chosenPath") ?? ""
+	@State var chosenLanguage: String = UserDefaults.standard.string(forKey: "chosenLanguage") ?? "en_US"
 	@State var errorMsg: String? = nil
 	static let widthMin = CGFloat(270)
 
 	var body: some View {
 		if(state.firstTime) {
-			let _ = state.getPatches()
+			let _ = state.updateServerKeys()
 		}
 
-		if(state.isRequestingPatches) {
+		if(state.isRequestingPatches || state.isRequestingLanguages) {
 			// progress indicator
 				ProgressView()
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -70,6 +71,17 @@ struct SettingsView: View {
 			Spacer()
 			  .frame(height: 30)
 
+			if(state.languages.count > 0) {
+				Picker("Language", selection: $chosenLanguage) {
+					ForEach(state.languages, id: \.self) { language in
+						Text(language)
+					}
+				}
+
+				Spacer()
+				  .frame(height: 30)
+			}
+
 			HStack {
 				Button(action: {
 					settingsState.chosenPath = ""
@@ -95,6 +107,11 @@ struct SettingsView: View {
 							errorMsg = "Choose a path"
 						}
 					}
+
+					if(state.chosenLanguage != chosenLanguage) {
+						state.chosenLanguage = chosenLanguage
+					}
+
 
 					// make sure that we have rights to notifications for macOS
 					if #available(OSX 10.15, *) {

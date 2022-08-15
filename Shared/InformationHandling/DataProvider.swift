@@ -7,7 +7,7 @@ import Foundation
 class DataProvider {
 
 	static func getChampions(path: String, language: String, completion: @escaping ([Champion]) -> Void) {
-		let key = "basicChampions_" + path
+		let key = "basicChampions_" + path + "_" + language
 
 		if let data = UserDefaults.standard.value(forKey: key) as? Data {
 			completion(try! PropertyListDecoder().decode([Champion].self, from: data))

@@ -12,16 +12,22 @@ class AppState: ObservableObject {
 	@Published var languages: [String] = []
 	@Published var patches: [String] = []
 	var isRequestingPatches: Bool = false
+	var isRequestingLanguages: Bool = false
 	var firstTime: Bool = true
 
 	@AppStorage("chosenLanguage") var chosenLanguage: String = "en_US"
 
-	func getPatches() {
+	func updateServerKeys() {
 		firstTime = false
 		isRequestingPatches = true
 		API.getPatches { patches in
 			self.patches = patches
 			self.isRequestingPatches = false
+		}
+
+		API.getLanguages { languages in
+			self.languages = languages
+			self.isRequestingLanguages = false
 		}
 	}
 
